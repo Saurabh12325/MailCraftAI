@@ -1,5 +1,8 @@
 package com.mail.mailCraft.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mail.mailCraft.Entity.EmailEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -39,6 +42,34 @@ public class EmailService {
           }
         )
            """ , prompt);
+
+        String respone = webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path("/v1beta/models/gemini-2.0-flash:generateContent")
+                         .build())
+                .header("X-goog-api-key:" + ApiKey)
+                .header("Content-Type", "application/json")
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+        return extractResponse(respone);
+
+    }
+
+    private String extractResponse(String response) {
+
+        try {
+            ObjectMapper objectMapper = new  ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(response);
+          return jsonNode.path("candidates")
+                    .get(0).path("contents")
+                    .path("parts").get(0)
+                    .path("text")
+                    .asText();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
