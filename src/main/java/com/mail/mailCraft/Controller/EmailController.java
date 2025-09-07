@@ -19,7 +19,7 @@ public class EmailController {
 
     @PostMapping("/generate")
     public ResponseEntity<String> generateEmail(@RequestBody EmailEntity emailEntity){
-        String response = emailService.generateEmail(emailEntity);
+        String response = emailService.generateEmailReply(emailEntity);
         return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
