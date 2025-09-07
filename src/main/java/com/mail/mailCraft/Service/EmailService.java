@@ -28,32 +28,31 @@ public class EmailService {
 
         //Preparing the json body
         String requestBody = String.format(
-                """ 
-        {
-            "contents": [
-              {
-                "parts": [
-                  {
-                    "text": "%s"
-                  }
-                ]
-              }
-            ]
-          }
-        )
-           """ , prompt);
+                """
+                {
+                    "contents": [
+                      {
+                        "parts": [
+                          {
+                            "text": "%s"
+                          }
+                        ]
+                      }
+                    ]
+                }
+                """, prompt);
 
-        String respone = webClient.post()
+        String response = webClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/v1beta/models/gemini-2.0-flash:generateContent")
                          .build())
-                .header("X-goog-api-key:" + ApiKey)
+                .header("X-goog-api-key",ApiKey)
                 .header("Content-Type", "application/json")
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono(String.class)
                 .block();
-        return extractResponse(respone);
+        return extractResponse(response);
 
     }
 
@@ -63,7 +62,7 @@ public class EmailService {
             ObjectMapper objectMapper = new  ObjectMapper();
             JsonNode jsonNode = objectMapper.readTree(response);
           return jsonNode.path("candidates")
-                    .get(0).path("contents")
+                    .get(0).path("content")
                     .path("parts").get(0)
                     .path("text")
                     .asText();
