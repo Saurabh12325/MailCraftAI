@@ -24,7 +24,7 @@ public class EmailService {
 
     public String generateEmailReply(EmailEntity emailEntity) {
         //Preparing the prompt
-        String prompt = buildPrompt(emailEntity);
+       String prompt = buildPrompt(emailEntity);
 
         //Preparing the json body
         String requestBody = String.format(
@@ -74,7 +74,7 @@ public class EmailService {
 
     private String buildPrompt(EmailEntity emailEntity) {
         StringBuilder prompt = new StringBuilder();
-        prompt.append("Generate a Professional Email for the following email : ");
+        prompt.append("Generate a Professional Email reply for the following email : ");
         if(emailEntity.getTone()!=null && !emailEntity.getTone().isEmpty()){
              prompt.append("use a ").append(emailEntity.getTone()).append(" tone");
              //use a professional tone
